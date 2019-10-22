@@ -46,7 +46,8 @@ trainingData = pd.read_csv("C:/Users/andre/Desktop/Ubiqum/IoT analytics/Task 1/W
 # =============================================================================
 # FEATURE EMGINEERING
 # =============================================================================
-#trainingData = pd.concat([trainingData, validationData], axis=0)
+# Here I change the value range of the training set in order to change the scale to positive 
+# and to change the scale, deleting the lowest values and the highest values
 trainingData.iloc[:, 0:520] = np.where(trainingData.iloc[:, 0:520] <= 0,
         trainingData.iloc[:, 0:520] + 105,
         trainingData.iloc[:, 0:520] - 100)
@@ -89,14 +90,19 @@ def getduplicateColumnNames(df):
 
 trainingDatawoduplicates = trainingDatarp.drop(columns=getduplicateColumnNames(trainingDatarp))
 
+# Applying normalization by row in order to erase the "phone effect"
+transformer = Normalizer().fit_transform(trainingDatawoduplicates.iloc[:, 0:466])
+traintrans = pd.DataFrame(transformer, columns=trainingDatawoduplicates.iloc[:, 0:466].columns)
+old = pd.DataFrame(trainingData.iloc[:, 520:529])
+traintransf = pd.concat([traintrans, old], axis = 1, ignore_index = True, join="inner")
+traintransf.columns = trainingDatawoduplicates.columns
+
 # =============================================================================
 # FEATURE EMGINEERING
 # =============================================================================
-
+### Here I repeat the same process for the validation set
 ## Changing value range
- 
-#trainingData = pd.concat([trainingData, validationData], axis=0)
-validationData.iloc[:, 0:520] = np.where(validationData.iloc[:, 0:520] <= 0,
+ validationData.iloc[:, 0:520] = np.where(validationData.iloc[:, 0:520] <= 0,
         validationData.iloc[:, 0:520] + 105,
         validationData.iloc[:, 0:520] - 100)
   
@@ -116,4 +122,12 @@ validationDatarp  = pd.concat([validationDatarep, otherv], axis = 1)
 
 validationDatawoduplicates = validationDatarp.drop(columns=getduplicateColumnNames(trainingDatarp))
 
+# Normalizing by row
+transformerv = Normalizer().fit_transform(validationDatawoduplicates.iloc[:, 0:466])
+traintransv = pd.DataFrame(transformerv, columns=validationDatawoduplicates.iloc[:, 0:466].columns)
+oldv = pd.DataFrame(validationData.iloc[:, 520:529])
+traintransfv = pd.concat([traintransv, oldv], axis = 1, ignore_index = True, join="inner")
+traintransfv.columns = validationDatawoduplicates.columns
+
+## FInally  I merge both datasets
 mergedDataset = pd.concat([trainingDatawoduplicates, validationDatawoduplicates], axis=0)

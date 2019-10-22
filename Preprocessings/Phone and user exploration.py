@@ -41,7 +41,7 @@ validationData = pd.read_csv("C:/Users/andre/Desktop/Ubiqum/IoT analytics/Task 1
 # =============================================================================
 # Training data analysis
 # =============================================================================
-
+# First of all what I want to look is the floor distribution's for each dataset
 floor0 = trainingData[trainingData['FLOOR'] == 0]
 floor1 = trainingData[trainingData['FLOOR'] == 1]
 floor2 = trainingData[trainingData['FLOOR'] == 2]
@@ -56,7 +56,8 @@ floor3v = validationData[validationData['FLOOR'] == 3]
 floor4v = validationData[validationData['FLOOR'] == 4]
 floor5v = validationData[validationData['FLOOR'] == 5]
 
-
+# Here I change the value range of the training set in order to change the scale to positive 
+# and to apply the preprocessing that changes the scale
 trainingData.iloc[:, 0:520] = np.where(trainingData.iloc[:, 0:520] <= 0,
         trainingData.iloc[:, 0:520] + 105,
         trainingData.iloc[:, 0:520] - 100)
@@ -86,35 +87,21 @@ validationDatarep = validationDatarep.iloc[:, 0:520].replace(np.r_[-16:0],0)
 
 validationDatarp  = pd.concat([validationDatarep, other], axis = 1)
 
-
+## Here I created the histogram of the WAP signal distribution
 WAPs = validationDatarp.filter(like="WAP")
 WAPsmelted = pd.melt(WAPs)
 plt.hist(WAPsmelted['value'])
+# As the plot doesn't look good because the 0 values are much more represented,
+# here I create a plot without those 0 values
 WAPSmeltedw0 = WAPsmelted.loc[(WAPsmelted.iloc[:,1] != 0)]
 plt.hist(WAPSmeltedw0['value'], bins =21)
-
-
-
-#phoneid = []
-
-#for i in range(0,25):
-    #phone = trainingData[trainingData['PHONEID'] == 14]
-    #phoneid.append(phone)
-    
-#def melter(x):
-    #for i in phoneid:
-        #WAPs = phone.filter(like="WAP")
-        #WAPsmelted = pd.melt(WAPs)
-        #WAPSmeltedw0 = WAPsmelted.loc[(WAPsmelted.iloc[:,1] != 0)]
-        #return WAPSmeltedw0
-    
-#melter(phoneid)
-
-
 
 # =============================================================================
 # HARDCODE :(
 # =============================================================================
+
+# The idea here was to check the distributions of the phones
+
 phone00 = trainingData[trainingData['PHONEID'] == 0]
 phone01 = trainingData[trainingData['PHONEID'] == 1]
 phone02 = trainingData[trainingData['PHONEID'] == 2]
@@ -141,13 +128,14 @@ phone22 = trainingData[trainingData['PHONEID'] == 22]
 phone23 = trainingData[trainingData['PHONEID'] == 23]
 phone24 = trainingData[trainingData['PHONEID'] == 24]
 
+# This function I created melts the values of the WAPs by phone
 def melting(df):
     df = df.filter(like="WAP")
     df = pd.melt(df)
     df = df.loc[(df.iloc[:,1] != 0)]
     return df
 
-
+# Here I apply the function to all the dataframes
 phone00m = melting(phone00)
 phone01m = melting(phone01) 
 phone02m = melting(phone02)
@@ -202,25 +190,7 @@ x.first()
 # VALIDATION ANALYSIS
 # =============================================================================
 
-#phoneid = []
-
-#for i in range(0,25):
-#    phone = trainingData[trainingData['PHONEID'] == 14]
-#    phoneid.append(phone)
-    
-#def melter2(x):
-#    for i in phoneid:
-#        WAPs = phone.filter(like="WAP")
-#        WAPsmelted = pd.melt(WAPs)
-#        WAPSmeltedw0 = WAPsmelted.loc[(WAPsmelted.iloc[:,1] != 0)]
-#        return WAPSmeltedw0
-    
-melter(phoneid)
-
-validationData.iloc[:, 0:520] = np.where(validationData.iloc[:, 0:520] <= 0,
-        validationData.iloc[:, 0:520] + 105,
-        validationData.iloc[:, 0:520] - 100)
-
+# Here I repeat the same process for the validation set
 # =============================================================================
 # HARDCODE :(
 # =============================================================================
@@ -309,36 +279,9 @@ plt.hist(phone21mv['value'], bins =21)
 # =============================================================================
 # USERID TD Analysis
 # =============================================================================
-userplots = []
 
-def userplotator(df):
-    for i in range(1,19): 
-        user = trainingData[trainingData['USERID'] == i]
-        user = melting(user)
-        userplots.append(user)
+# Here I repeat the same process for userID on the training set
 
-userplotator(trainingData)
-
-#grid = seaborn.FacetGrid(flights_combined, row='season')
-#grid.map(plt.scatter, 'pressure', 'delay')
-
-#for x in some_list:
- #   df = create_df_with(x)
-  #  plt.figure() #this creates a new figure on which your plot will appear
-   # seaborn.countplot(use_df)
-
-
-for i in userplots:
-    df = pd.DataFrame(i)
-    plt.hist(df)
-    continue
-
-    #grid = sns.FacetGrid(userplots)
-    #grid = grid.map(plt.hist)
-    #fig = plt.hist(i['value'])
-    #plt.subplot(fig)
-        
-        
 user01 = trainingData[trainingData['USERID'] == 1]
 user02 = trainingData[trainingData['USERID'] == 2]
 user03 = trainingData[trainingData['USERID'] == 3]

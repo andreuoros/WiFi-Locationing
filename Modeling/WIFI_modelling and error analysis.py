@@ -37,7 +37,8 @@ from sklearn.model_selection import cross_val_score
 #cross validation
 from sklearn.model_selection import train_test_split
 
-%run "C:/Users/andre/Desktop/Ubiqum/IoT analytics/Task 1/Wifi/GOOD/GOOD MODELS/Preprocessing/WIFI_PREPROCESSING1.py
+#Running the selected script
+%run "C:/Users/andre/Desktop/Ubiqum/IoT analytics/Task 1/Wifi/wifi-locationing/Preprocessings/WIFI_PREPROCESSING_splited validation and training.py"
 
 # =============================================================================
 # MODEL FOR BUILDING 
@@ -139,6 +140,8 @@ results["RE_Lat"] = abs((modelKNN_lat_pred - y_test['LATITUDE']))/y_test['LATITU
 
 print("MRE Lat:",np.mean(results["RE_Lat"]))
 print("MRE Long:",np.mean(results["RE_Long"]))
+
+# Plotting and analyzing the results
 
 plt.hist(results["AE_Lat"])
 plt.hist(results["AE_Long"])
